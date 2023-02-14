@@ -12,3 +12,7 @@ export const logout = () => {
 export const userInfo = () => {
 	return httpClient.get<AdminUserVO>("/auth/manage/v1/userInfo");
 };
+
+export const getMenuList = () => {
+	return httpClient.get("/admin/user/v1/getMenuList");
+};
