@@ -1,0 +1,18 @@
+[
+  {
+    "title": "首页",
+    "path": "/home",
+    "icon": "icon-home"
+  },
+  {
+    "title": "后台用户管理",
+    "path": "/admin/user",
+    "icon": "icon-user",
+    "children": [
+      {
+        "title": "用户列表",
+        "path": "/admin/user/list"
+      }
+    ]
+  }
+]

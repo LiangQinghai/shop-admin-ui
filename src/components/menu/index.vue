@@ -7,18 +7,14 @@
 		:level-indent="34"
 		:onCollapse="setCollapse"
 	>
-		<a-menu-item key="1">Nav1</a-menu-item>
-		<a-sub-menu key="2">
-			<template #title>Nav2</template>
-			<a-menu-item key="2_1">sub01</a-menu-item>
-			<a-menu-item key="2_2">sub02</a-menu-item>
-			<a-menu-item key="2_3">sub03</a-menu-item>
-		</a-sub-menu>
+		<menu-item :menu-list="menuList" />
 	</a-menu>
 </template>
 <script lang="ts" setup>
 import { useAppStore } from "@/store";
 import { computed } from "vue";
+import MenuItem from "@/components/menu/menuItem.vue";
+import menuList from "@/config/menu.json";
 
 const appStore = useAppStore();
 const topMenu = computed(() => appStore.topMenu);
