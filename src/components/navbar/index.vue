@@ -2,7 +2,7 @@
 	<div class="navbar">
 		<div class="left-side">
 			<a-space>
-				<img alt="logo" src="//p3-armor.byteimg.com/tos-cn-i-49unhts6dw/dfdba5317c0c20ce20e64fac803d52bc.svg~tplv-49unhts6dw-image.image" />
+				<img alt="logo" src="/shop.png" />
 				<a-typography-title :style="{ margin: 0, fontSize: '18px' }" :heading="5">AdminControlCenter</a-typography-title>
 				<icon-menu-fold v-if="!topMenu && appStore.device === 'mobile'" style="font-size: 22px; cursor: pointer" @click="toggleDrawerMenu" />
 			</a-space>
@@ -56,12 +56,6 @@
 					</a-avatar>
 					<template #content>
 						<a-doption>
-							<a-space @click="switchRoles">
-								<icon-tag />
-								<span> 切换角色 </span>
-							</a-space>
-						</a-doption>
-						<a-doption>
 							<a-space @click="$router.push({ name: 'Info' })">
 								<icon-user />
 								<span> 用户中心 </span>
@@ -98,7 +92,7 @@ const userStore = useUserStore();
 const { logout } = useUser();
 const { isFullscreen, toggle: toggleFullScreen } = useFullscreen();
 const avatar = computed(() => {
-	return userStore.avatar;
+	return userStore.avatar || "/avatar.gif";
 });
 const theme = computed(() => {
 	return appStore.theme;

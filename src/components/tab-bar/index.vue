@@ -18,7 +18,7 @@ import { ref, computed, watch, onUnmounted } from "vue";
 import type { RouteLocationNormalized } from "vue-router";
 import { listenerRouteChange, removeRouteListener } from "@/utils/route-listener";
 import { useAppStore, useTabBarStore } from "@/store";
-import tabItem from "./tab-item.vue";
+import TabItem from "@/components/tab-bar/tab-item.vue";
 
 const appStore = useAppStore();
 const tabBarStore = useTabBarStore();
