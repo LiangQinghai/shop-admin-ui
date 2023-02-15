@@ -1,6 +1,7 @@
-import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
+import {createRouter, createWebHashHistory, RouteRecordRaw} from "vue-router";
 import NProgress from "nprogress"; // progress bar
 import "nprogress/nprogress.css";
+import {setRouteEmitter} from "@/utils/route-listener";
 
 // 设置nprogress
 NProgress.configure({ showSpinner: false });
@@ -62,4 +63,8 @@ const router = createRouter({
 	scrollBehavior: () => ({ left: 0, top: 0 })
 });
 
+router.beforeEach(async to => {
+	// emit route change
+	setRouteEmitter(to);
+});
 export default router;

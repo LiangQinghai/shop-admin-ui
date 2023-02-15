@@ -25,12 +25,13 @@ const topMenu = computed(() => appStore.topMenu);
 // 计算当前路由地址
 const activeMenu = computed((): Array<string> => {
 	const path = route.path;
+	const res: string[] = [route.matched[0].path, path];
 	if (path.endsWith("/index")) {
 		const lastIndexOf = path.lastIndexOf("/");
 		const substring = path.substring(0, lastIndexOf);
-		return [path, substring];
+		res.push(substring);
 	}
-	return [path];
+	return res;
 });
 
 const setCollapse = (val: boolean) => {
