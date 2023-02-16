@@ -1,7 +1,7 @@
-import {createRouter, createWebHashHistory, RouteRecordRaw} from "vue-router";
+import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
 import NProgress from "nprogress"; // progress bar
 import "nprogress/nprogress.css";
-import {setRouteEmitter} from "@/utils/route-listener";
+import { setRouteEmitter } from "@/utils/route-listener";
 
 // 设置nprogress
 NProgress.configure({ showSpinner: false });

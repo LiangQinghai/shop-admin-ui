@@ -1,5 +1,5 @@
-import {RouteRecordRaw} from "vue-router";
-import {Layout} from "@/routes/constant";
+import { RouteRecordRaw } from "vue-router";
+import { Layout } from "@/routes/constant";
 
 // admin页面模块
 const adminRouter: Array<RouteRecordRaw> = [
