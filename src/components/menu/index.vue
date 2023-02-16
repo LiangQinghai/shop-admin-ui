@@ -8,7 +8,6 @@
 		:onCollapse="setCollapse"
 		:default-selected-keys="activeMenu"
 		:selected-keys="activeMenu"
-		:open-keys="activeMenu"
 	>
 		<menu-item :menu-list="menuList" />
 	</a-menu>
