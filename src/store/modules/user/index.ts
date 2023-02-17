@@ -15,7 +15,6 @@ const useUserStore = defineStore("user", {
 	actions: {
 		// 设置用户信息
 		setInfo(partial: Partial<UserState>) {
-			console.log(partial);
 			this.$patch(partial);
 		},
 		// 重置
@@ -25,7 +24,6 @@ const useUserStore = defineStore("user", {
 		async info() {
 			const userInfoData = await userInfo();
 			if (userInfoData.data) {
-				console.log(userInfoData.data);
 				this.setInfo(userInfoData.data);
 			}
 		},
