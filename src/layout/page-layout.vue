@@ -1,5 +1,6 @@
 <template>
 	<div class="container">
+		<Breadcrumb v-if="showBreadcrumbItems" :items="breadcrumbItems"></Breadcrumb>
 		<router-view v-slot="{ Component, route }">
 			<transition name="fade" mode="out-in" appear>
 				<component :is="Component" v-if="route.meta.ignoreCache" :key="route.fullPath" />
@@ -12,12 +13,21 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from "vue";
+import { computed, reactive, ref } from "vue";
 import { useTabBarStore } from "@/store";
+import { listenerRouteChange } from "@/utils/route-listener";
 
 const tabBarStore = useTabBarStore();
 
+const breadcrumbItems = reactive<Array<string>>([]);
+const showBreadcrumbItems = ref<boolean>(true);
+
 const cacheList = computed(() => tabBarStore.getCacheList);
+listenerRouteChange(r => {
+	breadcrumbItems.length = 0;
+	breadcrumbItems.push(r.meta.title as string, r.matched[0].meta.title as string);
+	showBreadcrumbItems.value = r.name !== "home";
+});
 </script>
 
 <style scoped lang="less">
