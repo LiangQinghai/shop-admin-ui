@@ -40,7 +40,7 @@
 			<a-row style="margin-bottom: 16px">
 				<a-col :span="12">
 					<a-space>
-						<a-button type="primary">
+						<a-button type="primary" @click="openModelFunc">
 							<template #icon>
 								<icon-plus />
 							</template>
@@ -96,6 +96,19 @@
 				</template>
 			</a-table>
 		</a-card>
+		<a-modal v-model:visible="modelVisible" title="新增用户">
+			<a-form :model="userAddForm">
+				<a-form-item field="name" label="Name">
+					<a-input v-model="userAddForm.username" />
+				</a-form-item>
+				<a-form-item field="post" label="Post">
+					<a-select v-model="userAddForm.sex">
+						<a-option value="男">男</a-option>
+						<a-option value="女">女</a-option>
+					</a-select>
+				</a-form-item>
+			</a-form>
+		</a-modal>
 	</div>
 </template>
 <script setup lang="ts">
@@ -103,7 +116,7 @@ import { onMounted, reactive, ref } from "vue";
 import { PaginationProps, TableColumnData } from "@arco-design/web-vue";
 import { page } from "@/api/modules/user";
 import { PageDTO } from "@/api/types";
-import { AdminUserVO } from "@/api/modules/user/types";
+import { AdminUserUpdateDTO, AdminUserVO } from "@/api/modules/user/types";
 
 // 加载。。。
 const loading = ref<boolean>(false);
@@ -178,6 +191,13 @@ const fetchData = (pageQuery: PageDTO = { size: 20, page: 1 }) => {
 const pageChangeFunc = (page: number) => {
 	fetchData({ ...basePagination, page });
 };
+// 弹出框
+const modelVisible = ref<boolean>(false);
+const openModelFunc = () => {
+	modelVisible.value = true;
+};
+// 新增用户表单
+const userAddForm = reactive<AdminUserUpdateDTO>({ id: 0, nickName: "", password: "", username: "" });
 // 页面初始化
 onMounted(() => fetchData());
 </script>
