@@ -1,5 +1,3 @@
-import * as stream from "stream";
-
 export interface PageResult {
 	size?: number;
 	page?: number;

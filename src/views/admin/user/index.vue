@@ -1,18 +1,29 @@
 <template>
 	<div>
-		<a-card class="general-card" title="a title">
+		<a-card class="general-card" title="用户查找">
 			<a-row>
 				<a-col :flex="1">
-					<a-form :label-col-props="{ span: 6 }" :wrapper-col-props="{ span: 18 }" label-align="left">
+					<a-form ref="searchFormRef" :label-col-props="{ span: 6 }" :model="adminUserPageQuery" :wrapper-col-props="{ span: 18 }" label-align="right">
 						<a-row :gutter="16">
 							<a-col :span="8">
-								<a-form-item field="number" label="labelOne">
-									<a-input placeholder="please input" />
+								<a-form-item field="keyword" label="关键字">
+									<a-input v-model="adminUserPageQuery.keyword" placeholder="关键字模糊查询" />
 								</a-form-item>
 							</a-col>
 							<a-col :span="8">
-								<a-form-item field="name" label="name">
-									<a-select :options="['123']" placeholder="please select" />
+								<a-form-item field="sex" label="性别">
+									<a-select v-model="adminUserPageQuery.sex" placeholder="请选择查询性别">
+										<a-option>男</a-option>
+										<a-option>女</a-option>
+									</a-select>
+								</a-form-item>
+							</a-col>
+							<a-col :span="8">
+								<a-form-item field="status" label="状态">
+									<a-select v-model="adminUserPageQuery.status" placeholder="请选择查询状态">
+										<a-option value="true">启用</a-option>
+										<a-option value="false">失效</a-option>
+									</a-select>
 								</a-form-item>
 							</a-col>
 						</a-row>
@@ -21,13 +32,13 @@
 				<a-divider style="height: 84px" direction="vertical" />
 				<a-col :flex="'86px'" style="text-align: right">
 					<a-space direction="vertical" :size="18">
-						<a-button type="primary">
+						<a-button type="primary" @click="fetchData(adminUserPageQuery)">
 							<template #icon>
 								<icon-search />
 							</template>
 							查找
 						</a-button>
-						<a-button>
+						<a-button @click="$refs.searchFormRef.resetFields()">
 							<template #icon>
 								<icon-refresh />
 							</template>
@@ -96,16 +107,35 @@
 				</template>
 			</a-table>
 		</a-card>
-		<a-modal v-model:visible="modelVisible" title="新增用户">
-			<a-form :model="userAddForm">
-				<a-form-item field="name" label="Name">
-					<a-input v-model="userAddForm.username" />
+		<!-- 新增用户框 -->
+		<a-modal
+			v-model:visible="modelVisible"
+			title="新增用户"
+			@close="$refs.userAddFormRef.resetFields()"
+			@cancel="$refs.userAddFormRef.resetFields()"
+			@ok="addOrUpdateAdminUserFunc()"
+		>
+			<a-form :model="userAddOrUpdateForm" ref="userAddFormRef">
+				<a-form-item field="username" label="用户名称" required>
+					<a-input v-model="userAddOrUpdateForm.username" autocomplete="false" />
 				</a-form-item>
-				<a-form-item field="post" label="Post">
-					<a-select v-model="userAddForm.sex">
+				<a-form-item field="sex" label="性别">
+					<a-select v-model="userAddOrUpdateForm.sex" default-value="男">
 						<a-option value="男">男</a-option>
 						<a-option value="女">女</a-option>
 					</a-select>
+				</a-form-item>
+				<a-form-item field="nickName" label="昵称">
+					<a-input v-model="userAddOrUpdateForm.nickName" autocomplete="false" />
+				</a-form-item>
+				<a-form-item field="email" label="邮箱">
+					<a-input v-model="userAddOrUpdateForm.email" autocomplete="false" />
+				</a-form-item>
+				<a-form-item field="mobile" label="电话">
+					<a-input v-model="userAddOrUpdateForm.mobile" autocomplete="false" />
+				</a-form-item>
+				<a-form-item v-if="!userAddOrUpdateForm?.id" field="password" label="密码" required>
+					<a-input-password v-model="userAddOrUpdateForm.password" autocomplete="false" allow-clear />
 				</a-form-item>
 			</a-form>
 		</a-modal>
@@ -114,20 +144,20 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from "vue";
 import { PaginationProps, TableColumnData } from "@arco-design/web-vue";
-import { page } from "@/api/modules/user";
+import { page, registerAdminUser, updateAdminUser } from "@/api/modules/user";
 import { PageDTO } from "@/api/types";
-import { AdminUserUpdateDTO, AdminUserVO } from "@/api/modules/user/types";
+import { AdminUserPageQuery, AdminUserRegisterDTO, AdminUserUpdateDTO, AdminUserVO } from "@/api/modules/user/types";
 
 // 加载。。。
 const loading = ref<boolean>(false);
 // 分页定义
-const basePagination: PageDTO = {
+const adminUserPageQuery: AdminUserPageQuery = reactive<AdminUserPageQuery>({
 	page: 1,
 	size: 20
-};
+});
 const pagination = reactive<PaginationProps>({
-	current: basePagination.page,
-	pageSize: basePagination.size
+	current: adminUserPageQuery.page,
+	pageSize: adminUserPageQuery.size
 });
 
 // 表头定义
@@ -175,21 +205,18 @@ const tableData = ref<Array<AdminUserVO>>([]);
 // 请求数据
 const fetchData = (pageQuery: PageDTO = { size: 20, page: 1 }) => {
 	loading.value = true;
-	try {
-		page(pageQuery).then(res => {
-			if (res.data) {
-				tableData.value = res.data;
-				pagination.current = pageQuery.page;
-				pagination.total = res.totalNum ? res.totalNum : 0;
-			}
-		});
-	} finally {
+	page(pageQuery).then(res => {
+		if (res.data) {
+			tableData.value = res.data;
+			pagination.current = pageQuery.page;
+			pagination.total = res.totalNum ? res.totalNum : 0;
+		}
 		loading.value = false;
-	}
+	});
 };
 // 分页表更
 const pageChangeFunc = (page: number) => {
-	fetchData({ ...basePagination, page });
+	fetchData({ ...adminUserPageQuery, page });
 };
 // 弹出框
 const modelVisible = ref<boolean>(false);
@@ -197,7 +224,22 @@ const openModelFunc = () => {
 	modelVisible.value = true;
 };
 // 新增用户表单
-const userAddForm = reactive<AdminUserUpdateDTO>({ id: 0, nickName: "", password: "", username: "" });
+const userAddOrUpdateForm = reactive<AdminUserUpdateDTO>({ id: NaN, nickName: "", password: "", username: "" });
+// 新增/修改用户
+const addOrUpdateAdminUserFunc = () => {
+	if (userAddOrUpdateForm.id && isNaN(userAddOrUpdateForm.id)) {
+		const userAdd: AdminUserRegisterDTO = { ...userAddOrUpdateForm };
+		registerAdminUser(userAdd).then(() => {
+			modelVisible.value = false;
+			fetchData(adminUserPageQuery);
+		});
+	} else {
+		updateAdminUser(userAddOrUpdateForm).then(() => {
+			modelVisible.value = false;
+			fetchData(adminUserPageQuery);
+		});
+	}
+};
 // 页面初始化
 onMounted(() => fetchData());
 </script>

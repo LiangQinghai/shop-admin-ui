@@ -25,7 +25,11 @@ export interface TokenVO {
 
 export type AdminUserVO = UserState;
 
-export type AdminUserPageQuery = PageDTO;
+export interface AdminUserPageQuery extends PageDTO {
+	sex?: string;
+	keyword?: string;
+	status?: boolean;
+}
 
 export interface AdminUserChangePasswordDTO {
 	id: number;
