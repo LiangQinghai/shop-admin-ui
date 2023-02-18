@@ -7,7 +7,7 @@ export interface AdminUserLoginDTO {
 }
 
 export interface AdminUserRegisterDTO extends AdminUserLoginDTO {
-	nickName: string;
+	nickName?: string;
 	email?: string;
 	description?: string;
 	sex?: string;

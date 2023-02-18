@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<a-card class="general-card" title="用户查找">
+		<a-card class="general-card" title="后台用户管理">
 			<a-row>
 				<a-col :flex="1">
 					<a-form ref="searchFormRef" :label-col-props="{ span: 6 }" :model="adminUserPageQuery" :wrapper-col-props="{ span: 18 }" label-align="right">
@@ -60,23 +60,11 @@
 					</a-space>
 				</a-col>
 				<a-col :span="12" style="display: flex; align-items: center; justify-content: end">
-					<a-tooltip content="刷新">
+					<a-tooltip content="刷新" @click="fetchData(adminUserPageQuery)">
 						<div class="action-icon">
 							<icon-refresh size="18" />
 						</div>
 					</a-tooltip>
-					<a-dropdown>
-						<a-tooltip content="密度">
-							<div class="action-icon">
-								<icon-line-height size="18" />
-							</div>
-						</a-tooltip>
-						<template #content>
-							<a-doption value="123">
-								<span>123</span>
-							</a-doption>
-						</template>
-					</a-dropdown>
 				</a-col>
 			</a-row>
 			<a-table
@@ -100,10 +88,14 @@
 					{{ record?.status ? "启用" : "失效" }}
 				</template>
 				<template #operations="{ record }">
-					<a-button type="text" size="small">编辑</a-button>
-					<a-button type="text" size="small" status="danger" :disabled="record?.status">删除</a-button>
-					<a-button type="text" size="small" status="warning" v-if="record?.status">失效</a-button>
-					<a-button type="text" size="small" status="success" v-if="!record?.status">启用</a-button>
+					<a-button type="text" size="small" @click="updateBtnFunc(record)">编辑</a-button>
+					<a-popconfirm :content="`确定删除用户${record?.username}?`" type="error" @ok="deleteBtnFunc(record)">
+						<a-button type="text" size="small" status="danger" :disabled="record?.status">删除</a-button>
+					</a-popconfirm>
+					<a-popconfirm :content="`确定失效用户${record?.username}?`" type="warning" @ok="disableBtnFunc(record)">
+						<a-button type="text" size="small" status="warning" v-if="record?.status">失效</a-button>
+					</a-popconfirm>
+					<a-button type="text" size="small" status="success" v-if="!record?.status" @click="enableBtnFunc(record)">启用</a-button>
 				</template>
 			</a-table>
 		</a-card>
@@ -144,7 +136,7 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from "vue";
 import { PaginationProps, TableColumnData } from "@arco-design/web-vue";
-import { page, registerAdminUser, updateAdminUser } from "@/api/modules/user";
+import { deleteAdminUser, disableAdminUser, enableAdminUser, page, registerAdminUser, updateAdminUser } from "@/api/modules/user";
 import { PageDTO } from "@/api/types";
 import { AdminUserPageQuery, AdminUserRegisterDTO, AdminUserUpdateDTO, AdminUserVO } from "@/api/modules/user/types";
 
@@ -224,21 +216,44 @@ const openModelFunc = () => {
 	modelVisible.value = true;
 };
 // 新增用户表单
-const userAddOrUpdateForm = reactive<AdminUserUpdateDTO>({ id: NaN, nickName: "", password: "", username: "" });
+const userAddOrUpdateForm = ref<AdminUserUpdateDTO>({ id: NaN, password: "", username: "" });
 // 新增/修改用户
 const addOrUpdateAdminUserFunc = () => {
-	if (userAddOrUpdateForm.id && isNaN(userAddOrUpdateForm.id)) {
-		const userAdd: AdminUserRegisterDTO = { ...userAddOrUpdateForm };
+	if (userAddOrUpdateForm.value.id && isNaN(userAddOrUpdateForm.value.id)) {
+		const userAdd: AdminUserRegisterDTO = { ...userAddOrUpdateForm.value };
 		registerAdminUser(userAdd).then(() => {
 			modelVisible.value = false;
 			fetchData(adminUserPageQuery);
 		});
 	} else {
-		updateAdminUser(userAddOrUpdateForm).then(() => {
+		updateAdminUser(userAddOrUpdateForm.value).then(() => {
 			modelVisible.value = false;
 			fetchData(adminUserPageQuery);
 		});
 	}
+};
+// 修改用户
+const updateBtnFunc = (adminUserVO: AdminUserVO) => {
+	userAddOrUpdateForm.value = { ...adminUserVO, password: "" };
+	openModelFunc();
+};
+// 删除用户
+const deleteBtnFunc = (adminUserVO: AdminUserVO) => {
+	deleteAdminUser([adminUserVO.id]).then(() => {
+		fetchData(adminUserPageQuery);
+	});
+};
+// 失效用户
+const disableBtnFunc = (adminUserVO: AdminUserVO) => {
+	disableAdminUser([adminUserVO.id]).then(() => {
+		fetchData(adminUserPageQuery);
+	});
+};
+// 启用用户
+const enableBtnFunc = (adminUserVO: AdminUserVO) => {
+	enableAdminUser([adminUserVO.id]).then(() => {
+		fetchData(adminUserPageQuery);
+	});
 };
 // 页面初始化
 onMounted(() => fetchData());
