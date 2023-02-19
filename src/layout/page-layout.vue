@@ -25,7 +25,7 @@ const showBreadcrumbItems = ref<boolean>(true);
 const cacheList = computed(() => tabBarStore.getCacheList);
 listenerRouteChange(r => {
 	breadcrumbItems.length = 0;
-	breadcrumbItems.push(r.meta.title as string, r.matched[0].meta.title as string);
+	breadcrumbItems.push(r.matched[0].meta.title as string, r.meta.title as string);
 	showBreadcrumbItems.value = r.name !== "home";
 });
 </script>

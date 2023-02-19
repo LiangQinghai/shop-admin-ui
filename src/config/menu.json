@@ -14,5 +14,16 @@
 				"path": "/admin/user/index"
 			}
 		]
+	},
+	{
+		"title": "个人中心",
+		"path": "/userCenter",
+		"icon": "icon-user",
+		"children": [
+			{
+				"title": "用户设置",
+				"path": "/userCenter/setting/index"
+			}
+		]
 	}
 ]

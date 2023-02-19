@@ -10,6 +10,9 @@ const useUserStore = defineStore("user", {
 	getters: {
 		userInfo(state: UserState): UserState {
 			return { ...state };
+		},
+		getUserInfo(): UserState {
+			return { ...this };
 		}
 	},
 	actions: {
