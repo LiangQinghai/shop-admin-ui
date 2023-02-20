@@ -48,7 +48,7 @@ menuList
 				const childRoute: RouteRecordRaw = {
 					path: child.path,
 					name: child.name,
-					component: modules[importComponent],
+					component: modules[importComponent] ? modules[importComponent] : () => import("../components/errors/404.vue"),
 					meta: { ...child.meta, key: child.name, title: child.title }
 				};
 				routeRecord.children.push(childRoute);
