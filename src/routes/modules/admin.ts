@@ -8,7 +8,7 @@ const adminRouter: Array<RouteRecordRaw> = [
 		component: Layout,
 		redirect: "/admin/user/index",
 		meta: {
-			title: "后台管理"
+			title: "后台中心"
 		},
 		children: [
 			{
@@ -18,7 +18,7 @@ const adminRouter: Array<RouteRecordRaw> = [
 				meta: {
 					keepAlive: false,
 					requiresAuth: true,
-					title: "后台用户列表",
+					title: "后台管理",
 					key: "adminUser"
 				}
 			}

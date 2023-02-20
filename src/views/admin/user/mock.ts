@@ -6,7 +6,7 @@ setupMock({
 		Mock.mock(new RegExp("/admin/user/v1"), () => {
 			const random = Mock.Random;
 			const data = [];
-			for (let i = 0; i < 1000; i++) {
+			for (let i = 0; i < 60; i++) {
 				data.push({
 					id: i + 1,
 					username: random.name(),

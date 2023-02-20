@@ -2,6 +2,9 @@ import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
 import NProgress from "nprogress"; // progress bar
 import "nprogress/nprogress.css";
 import { setRouteEmitter } from "@/utils/route-listener";
+import menuList from "@/config/menu.json";
+import { Layout } from "@/routes/constant";
+import { MenuDefine } from "@/config/types";
 
 // 设置nprogress
 NProgress.configure({ showSpinner: false });
@@ -20,6 +23,39 @@ Object.keys(metaRouters).forEach(item => {
 		routerArray.push(...metaRouters[item][key]);
 	});
 });
+
+// 动态加载json路由设置
+const modules = import.meta.glob("../views/**/*.vue");
+menuList
+	.map(item => {
+		// @ts-ignore
+		return { ...item } as MenuDefine;
+	})
+	.forEach((item: MenuDefine) => {
+		const routeRecord: RouteRecordRaw = {
+			children: [],
+			component: Layout,
+			path: item.path,
+			redirect: item.redirect,
+			meta: { ...item.meta, title: item.title }
+		};
+		if (item.children && item.children.length > 0) {
+			if (!item.redirect) {
+				routeRecord.redirect = item.children[0].path;
+			}
+			item.children.forEach(child => {
+				const importComponent: string = child.component ? child.component?.replace("@/", "../") : `../views${child.path}.vue`;
+				const childRoute: RouteRecordRaw = {
+					path: child.path,
+					name: child.name,
+					component: modules[importComponent],
+					meta: { ...child.meta, key: child.name, title: child.title }
+				};
+				routeRecord.children.push(childRoute);
+			});
+		}
+		routerArray.push(routeRecord);
+	});
 
 /**
  * @param path ==> 路由路径
