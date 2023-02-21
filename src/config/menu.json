@@ -111,6 +111,15 @@
 					"keepAlive": true,
 					"requiresAuth": true
 				}
+			},
+			{
+				"title": "积分统计",
+				"path": "/report/creditStatistics/index",
+				"name": "reportCreditStatistics",
+				"meta": {
+					"keepAlive": true,
+					"requiresAuth": true
+				}
 			}
 		]
 	},

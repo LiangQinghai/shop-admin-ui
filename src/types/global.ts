@@ -14,3 +14,8 @@ export declare namespace Menu {
 		children?: MenuOptions[];
 	}
 }
+
+export interface KeyValue {
+	key: string;
+	value: any;
+}
