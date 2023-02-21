@@ -1,8 +1,8 @@
 <template>
 	<div>
-		<queryTable></queryTable>
+		<QueryTable></QueryTable>
 	</div>
 </template>
 <script lang="ts" setup>
-import queryTable from "@/components/query-table/index.vue";
+import QueryTable from "@/components/query-table/index.vue";
 </script>
